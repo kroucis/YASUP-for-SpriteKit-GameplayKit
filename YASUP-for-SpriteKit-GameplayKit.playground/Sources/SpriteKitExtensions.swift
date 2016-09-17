@@ -1,4 +1,4 @@
-// YASUP for SpriteKit and GameplayKit
+// YASUP for SpriteKit and GameplayKit v1.1.0
 // Copyright © Kyle Roucis 2015-2016
 
 import SpriteKit
