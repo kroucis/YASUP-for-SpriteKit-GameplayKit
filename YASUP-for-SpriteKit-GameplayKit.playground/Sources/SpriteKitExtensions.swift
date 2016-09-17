@@ -1,10 +1,5 @@
-//
-//  SpriteKitExtensions.swift
-//  YASUP-for-SpriteKit-GameplayKit
-//
-//  Created by Kyle Roucis on 15-9-15.
-//  Copyright © 2015 Big Byte Studios. All rights reserved.
-//
+// YASUP for SpriteKit and GameplayKit
+// Copyright © Kyle Roucis 2015-2016
 
 import SpriteKit
 
@@ -24,7 +19,7 @@ extension CGVector
     static let unitY = CGVector(dx: 0, dy: 1)
 
     var magnitude: CGFloat
-    {
+        {
         get
         {
             return sqrt((self.dx * self.dx) + (self.dy * self.dy))
@@ -32,7 +27,7 @@ extension CGVector
     }
 
     var squaredMagnitude: CGFloat
-    {
+        {
         get
         {
             return ((self.dx * self.dx) + (self.dy * self.dy))
@@ -40,7 +35,7 @@ extension CGVector
     }
 
     var normalized: CGVector
-    {
+        {
         get
         {
             let mag = self.magnitude
@@ -61,7 +56,7 @@ extension CGVector
         self.dy += t.dy
     }
 
-    func translated(t: CGVector) -> CGVector
+    func translated(by t: CGVector) -> CGVector
     {
         return CGVector(dx: self.dx + t.dx, dy: self.dy + t.dy)
     }
@@ -72,33 +67,46 @@ extension CGVector
         self.dy *= s
     }
 
-    func scaled(s: CGFloat) -> CGVector
+    func scaled(by s: CGFloat) -> CGVector
     {
         return CGVector(dx: self.dx * s, dy: self.dy * s)
     }
 
-    func degreesToVector(other: CGVector) -> CGFloat
+    mutating func rotate(θ: CGFloat) -> Void
     {
-        return degreesBetweenVector(self, andVector: other)
+        let xp = self.dx * cos(θ) - self.dy * sin(θ)
+        let yp = self.dx * sin(θ) + self.dy * cos(θ)
+        self.dx = xp
+        self.dy = yp
     }
 
-    func radiansToVector(other: CGVector) -> CGFloat
+    func rotated(by θ: CGFloat) -> CGVector
     {
-        return radiansBetweenVector(self, andVector: other)
+        return CGVector(dx: self.dx * cos(θ) - self.dy * sin(θ), dy: self.dx * sin(θ) + self.dy * cos(θ))
+    }
+
+    func degrees(to vector: CGVector) -> CGFloat
+    {
+        return degreesBetween(self, and: vector)
+    }
+
+    func radians(to vector: CGVector) -> CGFloat
+    {
+        return radiansBetween(self, and: vector)
     }
 
 }
 
 public extension CGPoint
 {
-    func degreesToPoint(other: CGPoint) -> CGFloat
+    func degrees(to point: CGPoint) -> CGFloat
     {
-        return degreesBetweenPoint(self, andPoint: other)
+        return degreesBetween(self, and: point)
     }
 
-    func radiansToPoint(other: CGPoint) -> CGFloat
+    func radians(to point: CGPoint) -> CGFloat
     {
-        return radiansBetweenPoint(self, andPoint: other)
+        return radiansBetween(self, and: point)
     }
 
     static func midpoint(left: CGPoint, right: CGPoint) -> CGPoint
@@ -106,30 +114,30 @@ public extension CGPoint
         return CGPoint(x: (left.x + right.x) / 2.0, y: (left.y + right.y) / 2.0)
     }
 
-    static func distanceFromPoint(origin: CGPoint, toPoint dest: CGPoint) -> CGFloat
+    static func distance(from point: CGPoint, to dest: CGPoint) -> CGFloat
     {
-        let dist = origin.distanceVectorToPoint(dest)
+        let dist = point.distanceVector(to: dest)
         return dist.magnitude
     }
 
-    func distanceVectorToPoint(other: CGPoint) -> CGVector
+    func distanceVector(to point: CGPoint) -> CGVector
     {
-        return CGVector(dx: other.x - self.x, dy: other.y - self.y)
+        return CGVector(dx: point.x - self.x, dy: point.y - self.y)
     }
 
     func directionVectorToPoint(other: CGPoint) -> CGVector
     {
-        let dist = self.distanceVectorToPoint(other)
+        let dist = self.distanceVector(to: other)
         return dist.normalized
     }
 
-    func distanceToPoint(other: CGPoint) -> CGFloat
+    func distance(to point: CGPoint) -> CGFloat
     {
-        let dist = self.distanceVectorToPoint(other)
+        let dist = self.distanceVector(to: point)
         return dist.magnitude
     }
 
-    func translated(delta: CGVector) -> CGPoint
+    func translated(by delta: CGVector) -> CGPoint
     {
         return CGPoint(x: self.x + delta.dx, y: self.y + delta.dy)
     }
@@ -140,7 +148,7 @@ public extension CGPoint
         self.y += delta.dy
     }
 
-    func scaled(delta: CGVector) -> CGPoint
+    func scaled(by delta: CGVector) -> CGPoint
     {
         return CGPoint(x: self.x * delta.dx, y: self.y * delta.dy)
     }
@@ -150,43 +158,43 @@ public extension CGPoint
         self.x *= delta.dx
         self.y *= delta.dy
     }
-    
+
 }
 
-public func radiansToDegrees(radians: CGFloat) -> CGFloat
+public func toDegrees(radians: CGFloat) -> CGFloat
 {
     return radians * CGFloat(180.0 / M_PI)
 }
 
-public func degreesToRadians(degrees: CGFloat) -> CGFloat
+public func toRadians(degrees: CGFloat) -> CGFloat
 {
     return degrees * CGFloat(M_PI / 180.0)
 }
 
-public func degreesBetweenPoint(ref: CGPoint, andPoint dest: CGPoint) -> CGFloat
+public func degreesBetween(_ point: CGPoint, and dest: CGPoint) -> CGFloat
 {
-    return radiansToDegrees(radiansBetweenPoint(ref, andPoint: dest))
+    return toDegrees(radians: radiansBetween(point, and: dest))
 }
 
-public func radiansBetweenPoint(ref: CGPoint, andPoint dest: CGPoint) -> CGFloat
+public func radiansBetween(_ point: CGPoint, and dest: CGPoint) -> CGFloat
 {
-    let distVec = CGVector(dx: dest.x - ref.x, dy: dest.y - ref.y)
-    return distVec.radiansToVector(CGVector.unitX)
+    let distVec = CGVector(dx: dest.x - point.x, dy: dest.y - point.y)
+    return distVec.radians(to: CGVector.unitX)
 }
 
-public func degreesBetweenVector(ref: CGVector, andVector dest: CGVector) -> CGFloat
+public func degreesBetween(_ vector: CGVector, and dest: CGVector) -> CGFloat
 {
-    return radiansToDegrees(radiansBetweenVector(ref, andVector: dest))
+    return toDegrees(radians: radiansBetween(vector, and: dest))
 }
 
-public func radiansBetweenVector(ref: CGVector, andVector dest: CGVector) -> CGFloat
+public func radiansBetween(_ vector: CGVector, and dest: CGVector) -> CGFloat
 {
-    return atan2(dest.dy - ref.dy, dest.dx - ref.dx)
+    return atan2(dest.dy - vector.dy, dest.dx - vector.dx)
 }
 
 public func *(vec: CGVector, scale: CGFloat) -> CGVector
 {
-    return vec.scaled(scale)
+    return vec.scaled(by: scale)
 }
 
 public func *(size: CGSize, scale: CGFloat) -> CGSize
@@ -196,7 +204,7 @@ public func *(size: CGSize, scale: CGFloat) -> CGSize
 
 public func +(p: CGPoint, d: CGVector) -> CGPoint
 {
-    return p.translated(d)
+    return p.translated(by: d)
 }
 
 public func -(left: CGVector, right: CGVector) -> CGVector
@@ -224,7 +232,7 @@ public func +(left: CGPoint, right: CGPoint) -> CGPoint
 //  SKNode ! SKAction == Runs the SKAction on the SKNode
 //  SKNode !>> [ SKAction ] == Creates a SKSequenceAction with the array of SKActions, then runs the
 //      resulting sequence action on the SKNode.
-//  SKNode !|| [ SKAction ] == Creates a SKGroupAction with the array of SKActions, then runs the 
+//  SKNode !|| [ SKAction ] == Creates a SKGroupAction with the array of SKActions, then runs the
 //      resulting group action on the SKNode.
 //  SKAction*+ == Creates an action to repeat the SKAction forever.
 //  SKAction *+ N == Creates an action to repeat the SKAction N times.
@@ -233,20 +241,42 @@ public func +(left: CGPoint, right: CGPoint) -> CGPoint
 //  node ! SKAction.removeFromParent()
 //  node !>> SKAction.playSound
 //  node ! SKAction.animateWithTextures(anim, timePerFrame: 0.06)*+
-//  node !>> SKAction.playSoundFileNamed(soundToPlay, waitForCompletion: false) |> 
+//  node !>> SKAction.playSoundFileNamed(soundToPlay, waitForCompletion: false) |>
 //      SKAction.waitForDuration(1.5) |> SKAction.removeFromParent()
 //  node ! ((SKAction.scaleTo(1.5, duration: 0.25) |> SKAction.scaleTo(0.5, duration: 0.25))>>)*+
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-infix operator |> { associativity left precedence 160 }
-infix operator ! { }
-infix operator !>> { precedence 80 }
-infix operator !|| { precedence 80 }
-postfix operator >> { }
-postfix operator || { }
-postfix operator *+ { }
-infix operator *+ { precedence 140 }
+precedencegroup PipePrecedence
+{
+    associativity: right
+    higherThan: RepeatedActionPrecedence
+}
+
+precedencegroup ActionCollectionPrecedence
+{
+
+}
+
+precedencegroup RepeatedActionPrecedence
+{
+    higherThan: ActionCollectionPrecedence
+}
+
+precedencegroup RunActionPrecendence
+{
+    associativity: left
+    higherThan: ActionCollectionPrecedence
+}
+
+infix operator |> : PipePrecedence
+infix operator ! : RunActionPrecendence
+infix operator !>> : ActionCollectionPrecedence
+infix operator !|| : ActionCollectionPrecedence
+infix operator *+ : RepeatedActionPrecedence
+postfix operator >>
+postfix operator ||
+postfix operator *+
 
 public func |>(first: SKAction, second: SKAction) -> [ SKAction ]
 {
@@ -272,7 +302,7 @@ public postfix func ||(actions: [ SKAction ]) -> SKAction
 
 public func !(node: SKNode, action: SKAction) -> Void
 {
-    node.runAction(action)
+    node.run(action)
 }
 
 public func !>>(node: SKNode, actions: [ SKAction ]) -> Void
@@ -287,10 +317,10 @@ public func !||(node: SKNode, actions: [ SKAction ]) -> Void
 
 public postfix func *+(action: SKAction) -> SKAction
 {
-    return SKAction.repeatActionForever(action)
+    return SKAction.repeatForever(action)
 }
 
 public func *+(action: SKAction, times: Int) -> SKAction
 {
-    return SKAction.repeatAction(action, count: times)
+    return SKAction.repeat(action, count: times)
 }

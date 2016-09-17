@@ -1,10 +1,5 @@
-//
-//  PhysicsComponent.swift
-//  YASUP-for-SpriteKit-GameplayKit
-//
-//  Created by Kyle Roucis on 15-9-15.
-//  Copyright © 2015 Kyle Roucis. All rights reserved.
-//
+// YASUP for SpriteKit and GameplayKit
+// Copyright © Kyle Roucis 2015-2016
 
 import SpriteKit
 import GameplayKit
@@ -15,6 +10,11 @@ public class PhysicsComponent : GKComponent
     init(physicsBody: SKPhysicsBody)
     {
         self.physicsBody = physicsBody
+        super.init()
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
 }

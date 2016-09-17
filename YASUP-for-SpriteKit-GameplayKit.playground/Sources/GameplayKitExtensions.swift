@@ -1,10 +1,5 @@
-//
-//  GameplayKitExtensions.swift
-//  YASUP-for-SpriteKit-GameplayKit
-//
-//  Created by Kyle Roucis on 15-9-25.
-//  Copyright © 2015 Kyle Roucis. All rights reserved.
-//
+// YASUP for SpriteKit and GameplayKit
+// Copyright © Kyle Roucis 2015-2016
 
 import CoreGraphics
 import GameplayKit
@@ -19,7 +14,7 @@ public extension GKRandom
         let x = cos(radians)
         let y = sin(radians)
 
-        return CGVectorMake(CGFloat(x), CGFloat(y))
+        return CGVector(dx: CGFloat(x), dy: CGFloat(y))
     }
 
     func randomPointInRect(rect: CGRect) -> CGPoint
@@ -35,7 +30,7 @@ public extension GKRandom
 
     func randomElementFromArray<T>(array: [ T ]) -> T
     {
-        let idx = self.nextIntWithUpperBound(array.count)
+        let idx = self.nextInt(upperBound: array.count)
         return array[idx]
     }
     
